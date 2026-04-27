@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --pastel-pink: #FFF0F3;
+  --vibrant-pink: #FF4D8D;
+  --soft-white: #FFFFFF;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.4);
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: var(--pastel-pink);
+  color: #2D3748;
+  overflow-x: hidden;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 8px 32px 0 rgba(255, 77, 141, 0.1);
+}
+
+.glass-card {
+  @apply glass rounded-3xl p-6 transition-all duration-300;
+}
+
+.glass-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px 0 rgba(255, 77, 141, 0.2);
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-[#FF4D8D] to-[#FF8FA3];
+}
+
+.btn-primary {
+  @apply px-6 py-3 bg-[#FF4D8D] text-white rounded-full font-bold hover:bg-[#FF3377] transition-all shadow-lg shadow-pink-200 active:scale-95;
+}
+
+/* Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-15px) scale(1.05); }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.bg-orb {
+  @apply absolute rounded-full blur-[100px] opacity-20 pointer-events-none;
+}

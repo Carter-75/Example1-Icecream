@@ -1,0 +1,34 @@
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, tap } from 'rxjs';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ApiService {
+  private http = inject(HttpClient);
+  
+
+  // Dynamic API URL mapping
+  private get apiUrl(): string {
+    const isProd = ('false' as string) === 'true';
+    if (isProd) {
+      return '/_/backend';
+    }
+    return '/api';
+  }
+
+  getData<T>(endpoint: string): Observable<T> {
+    return this.http.get<T>(`${this.apiUrl}/${endpoint}`);
+  }
+
+  postData<T>(endpoint: string, body: any): Observable<T> {
+    return this.http.post<T>(`${this.apiUrl}/${endpoint}`, body);
+  }
+
+  getTrucks(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/trucks`);
+  }
+
+  
+}
