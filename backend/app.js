@@ -199,6 +199,7 @@ app.get('/', (req, res) => {
 
 // Mount at both /api and root to handle Vercel Service prefix stripping
 app.use('/api/trucks', trucksRouter);
+app.use('/trucks', trucksRouter);
 
 
 
