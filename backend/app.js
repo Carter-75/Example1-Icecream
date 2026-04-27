@@ -48,7 +48,6 @@ if (process.env.PROD_BACKEND_URL) frameAncestors.push(process.env.PROD_BACKEND_U
 
 
 // --- Routers ---
-const indexRouter = require('./routes/index');
 const trucksRouter = require('./routes/trucks');
 
 // --- Seeding Logic ---
@@ -81,6 +80,22 @@ const seedTrucks = async () => {
         currentLocation: "Washington Square Park",
         route: ["Union Square", "Astor Place", "SoHo"],
         image: "https://images.unsplash.com/photo-1565035010268-a3816f98589a?auto=format&fit=crop&q=80&w=400"
+      },
+      {
+        name: "Galaxy Scoops",
+        driver: "Leo Vance",
+        phone: "555-0921",
+        currentLocation: "Brooklyn Bridge Park",
+        route: ["DUMBO", "Brooklyn Heights", "Cobble Hill"],
+        image: "https://images.unsplash.com/photo-1505394033323-4241b2213fd3?auto=format&fit=crop&q=80&w=400"
+      },
+      {
+        name: "Minty Fresh",
+        driver: "Chloe Chen",
+        phone: "555-0443",
+        currentLocation: "Williamsburg Waterfront",
+        route: ["McCarren Park", "Greenpoint", "Bushwick"],
+        image: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&q=80&w=400"
       }
     ]);
     console.log('OK: Seeding complete');
@@ -183,8 +198,6 @@ app.get('/', (req, res) => {
 });
 
 // Mount at both /api and root to handle Vercel Service prefix stripping
-app.use('/api', indexRouter);
-app.use('/', indexRouter);
 app.use('/api/trucks', trucksRouter);
 
 

@@ -20,7 +20,7 @@
       </p>
     </header>
 
-    <!-- Search Section (Banana in a Box!) -->
+    <!-- Search Section -->
     <div class="max-w-2xl mx-auto mb-16">
       <div class="glass p-2 rounded-full flex items-center shadow-2xl">
         <div class="pl-6 text-gray-400">
@@ -38,12 +38,62 @@
           Track
         </button>
       </div>
-      <p class="text-center mt-4 text-sm text-pink-400 font-medium">
-        Showing {{filteredTrucks().length}} active trucks in NYC
-      </p>
     </div>
 
+    <!-- About Section -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-12 mb-24 items-center">
+      <div class="glass-card">
+        <h2 class="text-3xl font-bold mb-6 text-[#FF4D8D]">Our Sweet Mission</h2>
+        <p class="text-gray-600 leading-relaxed mb-6">
+          Sprinkle Squad started with a simple idea: ice cream should find you, not the other way around. 
+          We've built a high-tech fleet of artisan trucks that roam the streets of NYC, bringing premium 
+          hand-churned scoops directly to your neighborhood.
+        </p>
+        <div class="flex gap-8">
+          <div>
+            <p class="text-2xl font-black text-[#FF4D8D]">15+</p>
+            <p class="text-xs uppercase text-gray-400 font-bold">Active Trucks</p>
+          </div>
+          <div>
+            <p class="text-2xl font-black text-[#FF4D8D]">50k+</p>
+            <p class="text-xs uppercase text-gray-400 font-bold">Happy Scoops</p>
+          </div>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-4">
+        <img src="https://images.unsplash.com/photo-1572502120007-9669527f4d99?auto=format&fit=crop&q=80&w=300" class="rounded-2xl shadow-lg rotate-3">
+        <img src="https://images.unsplash.com/photo-1560008511-11c63416e52d?auto=format&fit=crop&q=80&w=300" class="rounded-2xl shadow-lg -rotate-3 mt-8">
+      </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="mb-24 text-center">
+      <h2 class="text-4xl font-bold mb-12">How to Track</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="glass-card">
+          <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center mx-auto mb-6 text-[#FF4D8D] font-black text-xl">1</div>
+          <h3 class="font-bold mb-2">Search</h3>
+          <p class="text-sm text-gray-500">Enter your zip code or park name above.</p>
+        </div>
+        <div class="glass-card">
+          <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-400 font-black text-xl">2</div>
+          <h3 class="font-bold mb-2">Locate</h3>
+          <p class="text-sm text-gray-500">Pick a truck and see its real-time location and route.</p>
+        </div>
+        <div class="glass-card">
+          <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6 text-purple-400 font-black text-xl">3</div>
+          <h3 class="font-bold mb-2">Enjoy</h3>
+          <p class="text-sm text-gray-500">Meet the driver and grab a fresh sprinkle cone!</p>
+        </div>
+      </div>
+    </section>
+
     <!-- Truck Grid -->
+    <div class="flex justify-between items-end mb-8">
+      <h2 class="text-3xl font-bold">Live Fleet</h2>
+      <p class="text-sm text-pink-400 font-medium tracking-widest uppercase">{{filteredTrucks().length}} Trucks Found</p>
+    </div>
+    
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
       @for (truck of filteredTrucks(); track truck._id) {
         <div class="glass-card flex flex-col group">
@@ -101,4 +151,10 @@
       }
     </div>
   </div>
+  
+  <!-- Footer -->
+  <footer class="relative z-10 py-12 bg-white/20 backdrop-blur-xl border-t border-pink-100 text-center mt-24">
+    <p class="text-[#FF4D8D] font-bold text-lg mb-2">Sprinkle Squad NYC</p>
+    <p class="text-gray-400 text-xs uppercase tracking-widest">Est. 2026 &bull; Handcrafted Joy</p>
+  </footer>
 </div>
