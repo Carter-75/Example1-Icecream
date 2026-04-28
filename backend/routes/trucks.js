@@ -1,26 +1,80 @@
 const express = require('express');
 const router = express.Router();
-const Truck = require('../models/truck');
+
+const MOCK_TRUCKS = [
+  {
+    _id: "1",
+    name: "The Pink Swirl",
+    driver: "Sarah Jenkins",
+    phone: "555-0234",
+    currentLocation: "Central Park West",
+    route: ["Columbus Circle", "72nd St", "Strawberry Fields"],
+    operatingHours: "11:00 AM - 7:00 PM",
+    image: "/pink_ice_cream_truck.png",
+    status: "Active",
+    createdAt: new Date()
+  },
+  {
+    _id: "2",
+    name: "Frosty Delights",
+    driver: "Mike Thompson",
+    phone: "555-0892",
+    currentLocation: "Hudson River Park",
+    route: ["Pier 45", "Chelsea Piers", "Battery Park"],
+    operatingHours: "11:00 AM - 7:00 PM",
+    image: "https://images.unsplash.com/photo-1501443762994-82bd5dabb892?auto=format&fit=crop&q=80&w=400",
+    status: "Active",
+    createdAt: new Date()
+  },
+  {
+    _id: "3",
+    name: "Sweet Wheels",
+    driver: "Anita Patel",
+    phone: "555-0112",
+    currentLocation: "Washington Square Park",
+    route: ["Union Square", "Astor Place", "SoHo"],
+    operatingHours: "11:00 AM - 7:00 PM",
+    image: "https://images.unsplash.com/photo-1565035010268-a3816f98589a?auto=format&fit=crop&q=80&w=400",
+    status: "Active",
+    createdAt: new Date()
+  },
+  {
+    _id: "4",
+    name: "Galaxy Scoops",
+    driver: "Leo Vance",
+    phone: "555-0921",
+    currentLocation: "Brooklyn Bridge Park",
+    route: ["DUMBO", "Brooklyn Heights", "Cobble Hill"],
+    operatingHours: "11:00 AM - 7:00 PM",
+    image: "https://images.unsplash.com/photo-1505394033323-4241b2213fd3?auto=format&fit=crop&q=80&w=400",
+    status: "Active",
+    createdAt: new Date()
+  },
+  {
+    _id: "5",
+    name: "Minty Fresh",
+    driver: "Chloe Chen",
+    phone: "555-0443",
+    currentLocation: "Williamsburg Waterfront",
+    route: ["McCarren Park", "Greenpoint", "Bushwick"],
+    operatingHours: "11:00 AM - 7:00 PM",
+    image: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&q=80&w=400",
+    status: "Active",
+    createdAt: new Date()
+  }
+];
 
 // GET all trucks
-router.get('/', async (req, res) => {
-  try {
-    const trucks = await Truck.find().sort({ status: 1, name: 1 });
-    res.json(trucks);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+router.get('/', (req, res) => {
+  res.json(MOCK_TRUCKS);
 });
 
 // GET specific truck
-router.get('/:id', async (req, res) => {
-  try {
-    const truck = await Truck.findById(req.params.id);
-    if (!truck) return res.status(404).json({ message: 'Truck not found' });
-    res.json(truck);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+router.get('/:id', (req, res) => {
+  const truck = MOCK_TRUCKS.find(t => t._id === req.params.id);
+  if (!truck) return res.status(404).json({ message: 'Truck not found' });
+  res.json(truck);
 });
 
 module.exports = router;
+

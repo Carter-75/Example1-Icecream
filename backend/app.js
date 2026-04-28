@@ -139,30 +139,30 @@ const connectDB = async () => {
 };
 
 // Initial connection
-connectDB();
+// connectDB();
 
 // --- Middlewares ---
 
 // Wait for DB middleware
-const dbCheck = async (req, res, next) => {
-  if (mongoose.connection.readyState === 1) return next();
-  if (mongoose.connection.readyState === 0) await connectDB();
-  
-  let attempts = 0;
-  const interval = setInterval(() => {
-    attempts++;
-    if (mongoose.connection.readyState === 1) {
-      clearInterval(interval);
-      return next();
-    }
-    if (attempts >= 30) {
-      clearInterval(interval);
-      return res.status(503).json({ 
-        error: 'Database connection timeout. Please refresh or check MONGODB_URI.' 
-      });
-    }
-  }, 100);
-};
+// const dbCheck = async (req, res, next) => {
+//   if (mongoose.connection.readyState === 1) return next();
+//   if (mongoose.connection.readyState === 0) await connectDB();
+//   
+//   let attempts = 0;
+//   const interval = setInterval(() => {
+//     attempts++;
+//     if (mongoose.connection.readyState === 1) {
+//       clearInterval(interval);
+//       return next();
+//     }
+//     if (attempts >= 30) {
+//       clearInterval(interval);
+//       return res.status(503).json({ 
+//         error: 'Database connection timeout. Please refresh or check MONGODB_URI.' 
+//       });
+//     }
+//   }, 100);
+// };
 
 app.use(helmet({
   frameguard: false,
@@ -175,7 +175,8 @@ app.use(cors({
 }));
 
 // Apply DB check to all /api routes
-app.use('/api', dbCheck);
+// app.use('/api', dbCheck);
+
 
 app.use(cors({
   origin: true,
