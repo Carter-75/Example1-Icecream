@@ -22,7 +22,7 @@ const MOCK_TRUCKS = [
     currentLocation: "Hudson River Park",
     route: ["Pier 45", "Chelsea Piers", "Battery Park"],
     operatingHours: "11:00 AM - 7:00 PM",
-    image: "https://images.unsplash.com/photo-1501443762994-82bd5dabb892?auto=format&fit=crop&q=80&w=400",
+    image: "/frosty_delights.png",
     status: "Active",
     createdAt: new Date()
   },
@@ -34,7 +34,7 @@ const MOCK_TRUCKS = [
     currentLocation: "Washington Square Park",
     route: ["Union Square", "Astor Place", "SoHo"],
     operatingHours: "11:00 AM - 7:00 PM",
-    image: "https://images.unsplash.com/photo-1565035010268-a3816f98589a?auto=format&fit=crop&q=80&w=400",
+    image: "/sweet_wheels.png",
     status: "Active",
     createdAt: new Date()
   },
@@ -46,7 +46,7 @@ const MOCK_TRUCKS = [
     currentLocation: "Brooklyn Bridge Park",
     route: ["DUMBO", "Brooklyn Heights", "Cobble Hill"],
     operatingHours: "11:00 AM - 7:00 PM",
-    image: "https://images.unsplash.com/photo-1505394033323-4241b2213fd3?auto=format&fit=crop&q=80&w=400",
+    image: "/galaxy_scoops.png",
     status: "Active",
     createdAt: new Date()
   },
@@ -58,7 +58,7 @@ const MOCK_TRUCKS = [
     currentLocation: "Williamsburg Waterfront",
     route: ["McCarren Park", "Greenpoint", "Bushwick"],
     operatingHours: "11:00 AM - 7:00 PM",
-    image: "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&q=80&w=400",
+    image: "/minty_fresh.png",
     status: "Active",
     createdAt: new Date()
   }
