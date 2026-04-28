@@ -8,6 +8,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <script>
+    (function() {
+      console.log('🍦 [Example1] Client script active.');
+      if (window.parent !== window) {
+        console.log('🍦 [Example1] Embedded in iframe. Sending handshake...');
+        window.parent.postMessage({ type: 'CHECK_IN', project: 'Example1-Icecream' }, '*');
+      } else {
+        console.log('🍦 [Example1] Running standalone.');
+      }
+    })();
+  </script>
   
 </head>
 <body class="bg-slate-50">
