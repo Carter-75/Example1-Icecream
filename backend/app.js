@@ -164,7 +164,10 @@ const dbCheck = async (req, res, next) => {
   }, 100);
 };
 
-app.use(helmet());
+app.use(helmet({
+  frameguard: false,
+  contentSecurityPolicy: false
+}));
 
 app.use(cors({
   origin: true,
