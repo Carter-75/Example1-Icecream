@@ -3,6 +3,21 @@
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/dist/frontend",
   "framework": "angular",
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "ALLOWALL"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors 'self' https://*.vercel.app https://carter-portfolio.fyi https://www.carter-portfolio.fyi http://localhost:3000 http://localhost:4200"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/(.*)",
