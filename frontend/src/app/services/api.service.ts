@@ -13,7 +13,7 @@ export class ApiService {
   private get apiUrl(): string {
     const isProd = ('__PRODUCTION__' as string) === 'true';
     if (isProd) {
-      return '/_/backend';
+      return '/api';
     }
     return '/api';
   }
