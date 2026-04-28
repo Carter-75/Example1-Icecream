@@ -165,16 +165,20 @@ const dbCheck = async (req, res, next) => {
 };
 
 app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-      "frame-ancestors": frameAncestors,
-    },
-  },
+  contentSecurityPolicy: false,
+  frameguard: false
 }));
 
 app.use((req, res, next) => {
-  res.setHeader('X-Frame-Options', 'ALLOWALL');
+  // Dynamically calculate frame ancestors to support various Vercel aliases
+  const host = req.get('host');
+  const protocol = req.protocol === 'https' || req.get('x-forwarded-proto') === 'https' ? 'https' : 'http';
+  const currentOrigin = `${protocol}://${host}`;
+  
+  const ancestors = ["'self'", "https://*.vercel.app", "https://carter-portfolio.fyi", "https://www.carter-portfolio.fyi", currentOrigin];
+  
+  res.setHeader('Content-Security-Policy', `frame-ancestors ${ancestors.join(' ')}`);
+  res.setHeader('X-Frame-Options', 'ALLOWALL'); 
   next();
 });
 
