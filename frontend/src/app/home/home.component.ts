@@ -2,8 +2,12 @@ import { Component, signal, inject, OnInit, viewChild, ElementRef, afterNextRend
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
-import * as Matter from 'matter-js';
-import anime from 'animejs';
+import * as THREE from 'three';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import Lenis from '@studio-freight/lenis';
+
+gsap.registerPlugin(ScrollTrigger);
 
 @Component({
   selector: 'app-home',
@@ -19,7 +23,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   protected trucks = signal<any[]>([]);
   protected searchTerm = signal('');
   
-  // Banana-in-a-box helper for signals
   get search() { return this.searchTerm(); }
   set search(v: string) { this.searchTerm.set(v); }
 
@@ -33,13 +36,23 @@ export class HomeComponent implements OnInit, OnDestroy {
   });
 
   private container = viewChild<ElementRef<HTMLDivElement>>('scene');
-  private engine?: Matter.Engine;
-  private render?: Matter.Render;
+  private scene?: THREE.Scene;
+  private camera?: THREE.PerspectiveCamera;
+  private renderer?: THREE.WebGLRenderer;
+  private sprinkles: THREE.Mesh[] = [];
+  private animationFrameId?: number;
+  private lenis?: Lenis;
 
   constructor() {
     afterNextRender(() => {
-      this.initPhysics();
-      this.revealUI();
+      this.initLenis();
+      this.initThreeJS();
+      
+      // Allow Angular view to render, then initialize GSAP
+      setTimeout(() => {
+        this.initGSAP();
+      }, 100);
+
       window.addEventListener('resize', this.handleResize);
     });
   }
@@ -53,78 +66,128 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     window.removeEventListener('resize', this.handleResize);
-    if (this.render) {
-      Matter.Render.stop(this.render);
-      if (this.render.canvas.parentNode) {
-        this.render.canvas.parentNode.removeChild(this.render.canvas);
-      }
-    }
-    if (this.engine) Matter.Engine.clear(this.engine);
+    if (this.animationFrameId) cancelAnimationFrame(this.animationFrameId);
+    if (this.renderer) this.renderer.dispose();
+    if (this.lenis) this.lenis.destroy();
+    ScrollTrigger.getAll().forEach(t => t.kill());
   }
 
-  private revealUI() {
-    anime({
-      targets: '.glass-card',
-      opacity: [0, 1],
-      translateY: [20, 0],
-      delay: anime.stagger(100),
-      easing: 'easeOutExpo'
+  private initLenis() {
+    this.lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+    });
+
+    const raf = (time: number) => {
+      this.lenis?.raf(time);
+      ScrollTrigger.update();
+      requestAnimationFrame(raf);
+    };
+
+    requestAnimationFrame(raf);
+  }
+
+  private initGSAP() {
+    gsap.utils.toArray('.gs-reveal').forEach((elem: any) => {
+      gsap.fromTo(elem, 
+        { y: 50, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: elem,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
     });
   }
 
-  private initPhysics() {
+  private initThreeJS() {
     const el = this.container()?.nativeElement;
     if (!el) return;
 
-    this.engine = Matter.Engine.create();
-    this.render = Matter.Render.create({
-      element: el,
-      engine: this.engine,
-      options: {
-        width: el.clientWidth,
-        height: el.clientHeight,
-        background: 'transparent',
-        wireframes: false
-      }
-    });
+    this.scene = new THREE.Scene();
+    
+    this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    this.camera.position.z = 30;
 
-    const ground = Matter.Bodies.rectangle(el.clientWidth / 2, el.clientHeight + 10, el.clientWidth, 20, { isStatic: true });
-    const wallLeft = Matter.Bodies.rectangle(-10, el.clientHeight / 2, 20, el.clientHeight, { isStatic: true });
-    const wallRight = Matter.Bodies.rectangle(el.clientWidth + 10, el.clientHeight / 2, 20, el.clientHeight, { isStatic: true });
+    this.renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    el.appendChild(this.renderer.domElement);
 
-    Matter.World.add(this.engine.world, [ground, wallLeft, wallRight]);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    this.scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(10, 20, 10);
+    this.scene.add(directionalLight);
 
-    // Add sprinkles periodically
-    const colors = ['#FF4D8D', '#FFB7C5', '#FFD1DC', '#74ebd5', '#ACB6E5'];
-    const addSprinkle = () => {
-      if (!this.engine) return;
-      const x = Math.random() * el.clientWidth;
-      const sprinkle = Matter.Bodies.rectangle(x, -10, 10, 4, {
-        render: { fillStyle: colors[Math.floor(Math.random() * colors.length)] },
-        restitution: 0.5
+    // Create Sprinkles
+    const geometry = new THREE.CapsuleGeometry(0.3, 1.2, 4, 8);
+    const colors = [0xFF4D8D, 0xFFB7C5, 0xFFD1DC, 0x74ebd5, 0xACB6E5];
+
+    for (let i = 0; i < 150; i++) {
+      const material = new THREE.MeshStandardMaterial({ 
+        color: colors[Math.floor(Math.random() * colors.length)],
+        roughness: 0.3,
+        metalness: 0.1
       });
-      Matter.World.add(this.engine.world, sprinkle);
+      const sprinkle = new THREE.Mesh(geometry, material);
       
-      // Cleanup old sprinkles
-      if (this.engine.world.bodies.length > 50) {
-        Matter.World.remove(this.engine.world, this.engine.world.bodies[4]);
+      sprinkle.position.x = (Math.random() - 0.5) * 60;
+      sprinkle.position.y = (Math.random() - 0.5) * 60;
+      sprinkle.position.z = (Math.random() - 0.5) * 40;
+      
+      sprinkle.rotation.x = Math.random() * Math.PI;
+      sprinkle.rotation.y = Math.random() * Math.PI;
+      
+      // Store custom rotation speeds
+      (sprinkle as any).userData = {
+        rx: (Math.random() - 0.5) * 0.02,
+        ry: (Math.random() - 0.5) * 0.02,
+        vy: -0.01 - Math.random() * 0.03
+      };
+
+      this.scene.add(sprinkle);
+      this.sprinkles.push(sprinkle);
+    }
+
+    const animate = () => {
+      this.animationFrameId = requestAnimationFrame(animate);
+      
+      this.sprinkles.forEach(s => {
+        s.rotation.x += s.userData['rx'];
+        s.rotation.y += s.userData['ry'];
+        s.position.y += s.userData['vy'];
+        
+        // Wrap around
+        if (s.position.y < -30) {
+          s.position.y = 30;
+          s.position.x = (Math.random() - 0.5) * 60;
+        }
+      });
+      
+      if (this.renderer && this.scene && this.camera) {
+        this.renderer.render(this.scene, this.camera);
       }
     };
 
-    setInterval(addSprinkle, 1000);
-    
-    const runner = Matter.Runner.create();
-    Matter.Runner.run(runner, this.engine);
-    Matter.Render.run(this.render);
+    animate();
   }
 
   private handleResize = () => {
-    const el = this.container()?.nativeElement;
-    if (el && this.render) {
-      this.render.canvas.width = el.clientWidth;
-      this.render.canvas.height = el.clientHeight;
-      this.render.options.width = el.clientWidth;
-      this.render.options.height = el.clientHeight;
+    if (this.camera && this.renderer) {
+      this.camera.aspect = window.innerWidth / window.innerHeight;
+      this.camera.updateProjectionMatrix();
+      this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
   };
 }
